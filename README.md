@@ -1,3 +1,5 @@
+![Sapo Saver](res/img/SapoSaver_nobg.png)
+
 # SAPO SAVER
 
 Não fique moscando com suas contas!
