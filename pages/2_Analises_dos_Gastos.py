@@ -76,6 +76,7 @@ if base_de_dados is not None:
     df: pd.DataFrame = pd.read_excel(io=base_de_dados)
 
     # MARK: TRATAMENTO DADOS
+    df["Data"] = pd.to_datetime(df["Data"], format="%d/%m/%Y")
     df = df.sort_values(by="Data", ascending=True)
     df = df.assign(
         **{
