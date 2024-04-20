@@ -1,9 +1,36 @@
 import streamlit as st
 import pandas as pd
+from io import BytesIO
 
 # CONFIGS
 # --------------------
 st.set_page_config(page_title="Criar Planilha", page_icon="🐸", layout="wide")
+
+
+# FUNÇÕES
+# --------------------
+def converter_para_excel(df: pd.DataFrame) -> BytesIO:
+    """
+    Converte o dataframe para excel.
+    Esta função converte para apenas uma planiha.
+
+    Argumentos:
+        df (pd.DataFrame): Pandas dataframe já tratado.
+
+    Retorna:
+        BytesIO: Objeto em bytes que pode ser posteriormente salvo em formato excel (.xlsx)
+    """
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+        df.to_excel(
+            writer,
+            index=False,
+            sheet_name="Dados",
+        )
+
+    output.seek(0)
+
+    return output
 
 
 # APP
@@ -14,6 +41,8 @@ st.markdown(
     # Criar Planilha
 
     Nesta página você pode criar uma planilha de controle de seus gastos.
+    
+    🚧 Página em construção 🚧
     
     ---
     """
@@ -34,7 +63,7 @@ with col1:
     """
     )
 
-    df = pd.DataFrame(
+    df_modelo = pd.DataFrame(
         {
             "Data": ["01/01/2000", "10/02/2000", "15/03/2000"],
             "Descrição": [
@@ -47,7 +76,13 @@ with col1:
         }
     )
 
-    st.data_editor(data=df, num_rows="dynamic")
+    df = st.data_editor(data=df_modelo, num_rows="dynamic")
+
+    st.download_button(
+        label="Download Modelo",
+        data=converter_para_excel(df=df),
+        file_name="SapoSaverControleGastos.xlsx",
+    )
 
 with col2:
     st.markdown(
