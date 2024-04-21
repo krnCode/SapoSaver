@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 from io import BytesIO
 
 # CONFIGS
@@ -82,6 +83,7 @@ if base_de_dados is not None:
         **{
             "Mes": df["Data"].dt.month_name(locale="pt_BR"),
             "Ano": df["Data"].dt.year,
+            "Periodo": df["Data"].dt.to_period(freq="M"),
         }
     )
     df["Mes"] = pd.Categorical(df["Mes"], categories=MESES, ordered=True)
@@ -89,7 +91,7 @@ if base_de_dados is not None:
     # MARK: DFS AGRUPADAS
     df_por_tipo = df.pivot_table(
         values="Valor",
-        index=["Ano", "Mes"],
+        index="Periodo",
         columns="Tipo",
         aggfunc="sum",
         fill_value=0,
@@ -102,7 +104,13 @@ if base_de_dados is not None:
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        pass
+        chart_extrato = (
+            alt.Chart(data=df)
+            .mark_bar()
+            .encode(x="Data", y="Valor", color="Valor")
+            .interactive()
+        )
+        st.altair_chart(altair_chart=chart_extrato, use_container_width=True)
 
     with col2:
         extrato_despesas = st.dataframe(
@@ -116,13 +124,18 @@ if base_de_dados is not None:
     st.markdown("---")
 
     # Gastos por tipo
-
     st.markdown("## Gastos por Tipo")
 
     col3, col4 = st.columns([2, 1])
 
     with col3:
-        pass
+        chart_por_tipo = (
+            alt.Chart(data=df_por_tipo)
+            .mark_bar()
+            .encode(x="Periodo", y="Mes")
+            .interactive()
+        )
+        st.altair_chart(altair_chart=chart_extrato, use_container_width=True)
 
     with col4:
         por_tipo = st.dataframe(
