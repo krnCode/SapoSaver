@@ -138,3 +138,14 @@ else:
     ### Faça o upload da sua planilha de gastos na tela lateral 👈
     """
     )
+
+
+with st.sidebar:
+    st.markdown(
+        """
+    ---
+
+    [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B3V8QAU)
+    
+    """
+    )
