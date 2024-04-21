@@ -1,10 +1,10 @@
 ![Sapo Saver](res/img/SapoSaver_nobg.png)
 
 # SAPO SAVER
-
 Não fique moscando com suas contas!
 
 Sapo Saver te ajuda a controlar seus gastos e manter seu orçamento financeiro.
+
 
 ## Descrição
 Sapo Saver é um web app para controle financeiro e orçamentário.
@@ -20,6 +20,9 @@ Com estas informações, você poderá se planejar melhor, destinar seu dinheiro
 * Saiba se está gastando mais ou menos do que sua renda permite; 
 
 ## Como usar
+* Acesse a página do app;
+* Crie uma planilha modelo (já disponível no web app!) para incluir suas contas;
+* Na aba "Analise dos Gastos", faça o upload da sua planilha.
 
 ## Me apoie!
 Caso tenha gostado deste projeto, você pode me apoiar em minha página Ko-Fi abaixo.
