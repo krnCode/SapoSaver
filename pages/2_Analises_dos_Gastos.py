@@ -100,27 +100,29 @@ if base_de_dados is not None:
 
     # MARK: ANÁLISES
     # Extrato
-    st.markdown("## Extrato")
-    col1, col2 = st.columns([2, 1])
+    with st.expander(label="Extrato Editável", expanded=False):
+        extrato_despesas = st.data_editor(
+            data=df,
+            use_container_width=True,
+            num_rows="dynamic",
+            column_config={
+                "Data": st.column_config.DatetimeColumn(format="DD/MM/YYYY")
+            },
+        )
+
+    col1, col2 = st.columns([1, 1])
 
     with col1:
         chart_extrato = (
             alt.Chart(data=df)
             .mark_bar()
-            .encode(x="Data", y="Valor", color="Valor")
+            .encode(x="Periodo", y="Valor", color="Tipo")
             .interactive()
         )
         st.altair_chart(altair_chart=chart_extrato, use_container_width=True)
 
     with col2:
-        extrato_despesas = st.dataframe(
-            data=df,
-            use_container_width=True,
-            hide_index=True,
-            column_config={
-                "Data": st.column_config.DatetimeColumn(format="DD/MM/YYYY")
-            },
-        )
+        pass
     st.markdown("---")
 
     # Gastos por tipo
