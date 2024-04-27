@@ -79,24 +79,26 @@ if base_de_dados is not None:
     # MARK: TRATAMENTO DADOS
     df["Data"] = pd.to_datetime(df["Data"], format="%d/%m/%Y")
     df = df.sort_values(by="Data", ascending=True)
-    df = df.assign(
-        **{
-            "Mes": df["Data"].dt.month_name(locale="pt_BR"),
-            "Ano": df["Data"].dt.year,
-            "Periodo": df["Data"].dt.to_period(freq="M"),
-        }
-    )
-    df["Mes"] = pd.Categorical(df["Mes"], categories=MESES, ordered=True)
+    # TODO: se não for mais necessário, excluir do código
+    # df = df.assign(
+    #     **{
+    #         "Mes": df["Data"].dt.month_name(locale="pt_BR"),
+    #         "Ano": df["Data"].dt.year,
+    #         "Periodo": df["Data"].dt.to_period(freq="M"),
+    #     }
+    # )
+    # df["Mes"] = pd.Categorical(df["Mes"], categories=MESES, ordered=True)
 
     # MARK: DFS AGRUPADAS
-    df_por_tipo = df.pivot_table(
-        values="Valor",
-        index="Periodo",
-        columns="Tipo",
-        aggfunc="sum",
-        fill_value=0,
-        observed=True,
-    )
+    # TODO: se não for mais necessário, excluir do código
+    # df_por_tipo = df.pivot_table(
+    #     values="Valor",
+    #     index="Periodo",
+    #     columns="Tipo",
+    #     aggfunc="sum",
+    #     fill_value=0,
+    #     observed=True,
+    # )
 
     # MARK: ANÁLISES
     # Extrato
@@ -113,10 +115,11 @@ if base_de_dados is not None:
     col1, col2 = st.columns([1, 1])
 
     with col1:
+        df_periodo = df.groupby(pd.Grouper(key="Data", freq="M"))
         chart_extrato = (
-            alt.Chart(data=df)
+            alt.Chart(data=df_periodo)
             .mark_bar()
-            .encode(x="Periodo", y="Valor", color="Tipo")
+            .encode(x="Data", y="Valor", color="Tipo")
             .interactive()
         )
         st.altair_chart(altair_chart=chart_extrato, use_container_width=True)
@@ -126,26 +129,23 @@ if base_de_dados is not None:
     st.markdown("---")
 
     # Gastos por tipo
-    st.markdown("## Gastos por Tipo")
+    # st.markdown("## Gastos por Tipo")
 
-    col3, col4 = st.columns([2, 1])
+    # col3, col4 = st.columns([2, 1])
 
-    with col3:
-        chart_por_tipo = (
-            alt.Chart(data=df_por_tipo)
-            .mark_bar()
-            .encode(x="Periodo", y="Mes")
-            .interactive()
-        )
-        st.altair_chart(altair_chart=chart_extrato, use_container_width=True)
+    # with col3:
+    #     chart_por_tipo = (
+    #         alt.Chart(data=df).mark_bar().encode(x="Data", y="Tipo").interactive()
+    #     )
+    #     st.altair_chart(altair_chart=df, use_container_width=True)
 
-    with col4:
-        por_tipo = st.dataframe(
-            data=df_por_tipo,
-            use_container_width=True,
-            column_config={"Mes": st.column_config.TextColumn()},
-        )
-    st.markdown("---")
+    # with col4:
+    #     por_tipo = st.dataframe(
+    #         data=df,
+    #         use_container_width=True,
+    #         column_config={"Data": st.column_config.TextColumn()},
+    #     )
+    # st.markdown("---")
 
 else:
     st.markdown(
