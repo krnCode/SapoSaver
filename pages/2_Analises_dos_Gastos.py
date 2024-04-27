@@ -5,6 +5,12 @@ from io import BytesIO
 
 # CONFIGS
 # --------------------
+# Pandas
+pd.set_option("styler.format.precision", 2)
+pd.set_option("display.precision", 2)
+
+
+# Streamlit
 st.set_page_config(page_title="Analise dos Gastos", page_icon="🐸", layout="wide")
 
 # CONSTANTES
@@ -57,8 +63,6 @@ st.markdown(
     # Análise dos Gastos
 
     Nesta página você confere as análises de seus gastos, e pode também baixar uma planilha em excel com as análises.
-    
-    🚧 Página em construção 🚧
 
     ---
     """
@@ -80,6 +84,69 @@ if base_de_dados is not None:
     df["Data"] = pd.to_datetime(df["Data"], format="%d/%m/%Y")
     df = df.sort_values(by="Data", ascending=True)
 
+    # MARK: FILTROS
+    with st.sidebar:
+        st.markdown("---")
+        st.write("Variáveis de Controle dos Gastos")
+        renda = st.number_input("Informe sua renda do mes:", min_value=0)
+        meta_gastos = st.number_input("Informe sua meta de gastos:", min_value=0)
+        st.markdown("---")
+
+        st.write("Filtros")
+        # Filtro de períodos, lado a lado
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            ano = st.multiselect(
+                label="Ano",
+                options=df["Data"].dt.year.unique(),
+                default=None,
+                placeholder="Selecione",
+            )
+        with col2:
+            mes = st.multiselect(
+                label="Mes",
+                options=df["Data"].dt.month.sort_values().unique(),
+                default=None,
+                placeholder="Selecione",
+            )
+
+        # Filtros de tipo e descrição da despesa
+        descricao = st.multiselect(
+            label="Descrição",
+            options=df["Descrição"].unique(),
+            default=None,
+            placeholder="Selecione",
+        )
+        tipo = st.multiselect(
+            label="Tipo",
+            options=df["Tipo"].unique(),
+            default=None,
+            placeholder="Selecione",
+        )
+
+        df = df.assign(
+            **{
+                "Ano": df["Data"].dt.year,
+                "Mes": df["Data"].dt.month,
+            }
+        )
+
+        query = []
+        if ano:
+            query.append(f"Ano == {ano}")
+        if mes:
+            query.append(f"Mes == {mes}")
+        if descricao:
+            descricao_str = "', '".join(descricao)
+            query.append(f"Descrição in ['{descricao_str}']")
+        if tipo:
+            tipo_str = "', '".join(tipo)
+            query.append(f"Tipo in ['{tipo_str}']")
+        if query:
+            df_filtro = df.query(" and ".join(query))
+        else:
+            df_filtro = df
+
     # Extrato
     with st.expander(label="Extrato Editável", expanded=False):
         extrato_despesas = st.data_editor(
@@ -90,18 +157,74 @@ if base_de_dados is not None:
                 "Data": st.column_config.DatetimeColumn(format="DD/MM/YYYY")
             },
         )
+    st.markdown("---")
 
+    # MARK: MÉTRICAS
+    st.markdown("## Resumo")
     col1, col2 = st.columns([1, 1])
 
-    with col1:
-        df_periodo = df.groupby(df["Data"].dt.to_period("M")).sum()
+    df_total_mes = (
+        df.groupby([pd.Grouper(key="Data", freq="ME")])["Valor"].sum().reset_index()
+    )
+    df_dif_mes_anterior = df_total_mes.set_index("Data").diff().tail(n=1)
+
+    st.metric(
+        label="Gastos do Mês",
+        value=df_total_mes["Valor"].tail(n=1),
+        delta=int(df_dif_mes_anterior["Valor"].item()),
+    )
+    st.markdown("---")
+    # MARK: GRÁFICOS
+    st.markdown("## Visualizações")
+    col3, col4 = st.columns([1, 1])
+
+    with col3:
+        df_periodo = (
+            df_filtro.groupby([pd.Grouper(key="Data", freq="ME")])["Valor"]
+            .sum()
+            .reset_index()
+        )
         chart_extrato = (
-            alt.Chart(data=df_periodo)
-            .mark_bar()
-            .encode(x="Data", y="Valor", color="Tipo")
+            (
+                alt.Chart(data=df_periodo)
+                .mark_bar()
+                .encode(x="Data", y="Valor", color="Valor")
+            )
+            .properties(
+                title={
+                    "text": "Gastos por Período",
+                    "anchor": "middle",
+                    "fontSize": 20,
+                    "fontWeight": "bold",
+                }
+            )
             .interactive()
         )
         st.altair_chart(altair_chart=chart_extrato, use_container_width=True)
+
+    with col4:
+        df_descricao = (
+            df_filtro.groupby(["Descrição", "Tipo"])["Valor"].sum().reset_index()
+        )
+        chart_descricao = (
+            alt.Chart(data=df_descricao)
+            .mark_bar()
+            .encode(
+                x="Valor",
+                y=alt.Y("Descrição").sort("-x"),
+                color="Tipo",
+            )
+            .interactive()
+            .properties(
+                title={
+                    "text": "Total de Gastos Conforme Descrição",
+                    "anchor": "middle",
+                    "fontSize": 20,
+                    "fontWeight": "bold",
+                }
+            )
+        )
+        st.altair_chart(altair_chart=chart_descricao, use_container_width=True)
 
 
 else:
