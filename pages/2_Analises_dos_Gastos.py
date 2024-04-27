@@ -13,23 +13,6 @@ pd.set_option("display.precision", 2)
 # Streamlit
 st.set_page_config(page_title="Analise dos Gastos", page_icon="🐸", layout="wide")
 
-# CONSTANTES
-# --------------------
-MESES: list = [
-    "Janeiro",
-    "Fevereiro",
-    "Março",
-    "Abril",
-    "Maio",
-    "Junho",
-    "Julho",
-    "Agosto",
-    "Setembro",
-    "Outubro",
-    "Novembro",
-    "Dezembro",
-]
-
 
 # FUNCÕES
 # --------------------
