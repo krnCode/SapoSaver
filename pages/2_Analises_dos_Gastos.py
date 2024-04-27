@@ -5,6 +5,9 @@ from io import BytesIO
 
 # CONFIGS
 # --------------------
+# Altair
+alt.renderers.set_embed_options(format_locale="pt-BR", time_format_locale="pt-BR")
+
 # Pandas
 pd.set_option("styler.format.precision", 2)
 pd.set_option("display.precision", 2)
@@ -71,8 +74,10 @@ if base_de_dados is not None:
     with st.sidebar:
         st.markdown("---")
         st.write("Variáveis de Controle dos Gastos")
-        renda = st.number_input("Informe sua renda do mes:", min_value=0)
-        meta_gastos = st.number_input("Informe sua meta de gastos:", min_value=0)
+        renda = st.number_input("Informe sua renda do mes:", min_value=0, value=2300)
+        meta_gastos = st.number_input(
+            "Informe sua meta de gastos:", min_value=0, value=1500
+        )
         st.markdown("---")
 
         st.write("Filtros")
@@ -142,6 +147,7 @@ if base_de_dados is not None:
         )
     st.markdown("---")
 
+    # TODO: Incluir mais informações no resumo (top 3 despesas, se está dentro do orçamento ou fora, etc.)
     # MARK: MÉTRICAS
     st.markdown("## Resumo")
     col1, col2 = st.columns([1, 1])
@@ -157,10 +163,13 @@ if base_de_dados is not None:
         delta=int(df_dif_mes_anterior["Valor"].item()),
     )
     st.markdown("---")
+
     # MARK: GRÁFICOS
     st.markdown("## Visualizações")
     col3, col4 = st.columns([1, 1])
 
+    # TODO: Ajustar datas - tradução para pt_BR
+    # TODO: Ajustar gráfico - descrição aparece entre as barras
     with col3:
         df_periodo = (
             df_filtro.groupby([pd.Grouper(key="Data", freq="ME")])["Valor"]
@@ -170,8 +179,16 @@ if base_de_dados is not None:
         chart_extrato = (
             (
                 alt.Chart(data=df_periodo)
-                .mark_bar()
-                .encode(x="Data", y="Valor", color="Valor")
+                .mark_bar(size=10)
+                .encode(
+                    x=alt.X(
+                        "Data:T",
+                        timeUnit="yearmonth",
+                        axis=alt.Axis(title="Periodo", format="%b %y"),
+                    ),
+                    y="Valor",
+                    color="Valor",
+                )
             )
             .properties(
                 title={
@@ -183,7 +200,32 @@ if base_de_dados is not None:
             )
             .interactive()
         )
-        st.altair_chart(altair_chart=chart_extrato, use_container_width=True)
+        chart_renda = (
+            alt.Chart(pd.DataFrame({"Renda": [renda]}))
+            .mark_rule(
+                color="#7CFFCB",
+                description="Valor da Renda",
+                strokeCap="butt",
+                strokeWidth=1,
+                strokeDash=[8.8],
+            )
+            .encode(y="Renda")
+        )
+        chart_meta_gastos = (
+            alt.Chart(pd.DataFrame({"Meta de Gastos": [meta_gastos]}))
+            .mark_rule(
+                color="#eabe76",
+                description="Meta de Gastos",
+                strokeCap="butt",
+                strokeWidth=1,
+                strokeDash=[8.8],
+            )
+            .encode(y="Meta de Gastos")
+        )
+        st.altair_chart(
+            altair_chart=chart_extrato + chart_renda + chart_meta_gastos,
+            use_container_width=True,
+        )
 
     with col4:
         df_descricao = (
