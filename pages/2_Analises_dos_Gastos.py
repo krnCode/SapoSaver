@@ -1,12 +1,19 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
+import json
+from urllib import request
 from io import BytesIO
 
 # CONFIGS
 # --------------------
 # Altair
-alt.renderers.set_embed_options(format_locale="pt-BR", time_format_locale="pt-BR")
+with request.urlopen(
+    "https://raw.githubusercontent.com/d3/d3-time-format/master/locale/pt-BR.json"
+) as formato_ptbr:
+    ptbr_formato_data = json.load(formato_ptbr)
+alt.renderers.set_embed_options(time_format_locale=ptbr_formato_data)
+
 
 # Pandas
 pd.set_option("styler.format.precision", 2)
@@ -134,18 +141,6 @@ if base_de_dados is not None:
             df_filtro = df.query(" and ".join(query))
         else:
             df_filtro = df
-
-    # Extrato
-    with st.expander(label="Extrato Editável", expanded=False):
-        extrato_despesas = st.data_editor(
-            data=df,
-            use_container_width=True,
-            num_rows="dynamic",
-            column_config={
-                "Data": st.column_config.DatetimeColumn(format="DD/MM/YYYY")
-            },
-        )
-    st.markdown("---")
 
     # MARK: MÉTRICAS
     st.markdown("## Resumo do Mes Atual")
