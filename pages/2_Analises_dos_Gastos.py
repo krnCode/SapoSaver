@@ -7,14 +7,6 @@ from io import BytesIO
 
 # CONFIGS
 # --------------------
-# Altair
-with request.urlopen(
-    "https://raw.githubusercontent.com/d3/d3-time-format/master/locale/pt-BR.json"
-) as formato_ptbr:
-    ptbr_formato_data = json.load(formato_ptbr)
-alt.renderers.set_embed_options(time_format_locale=ptbr_formato_data)
-
-
 # Pandas
 pd.set_option("styler.format.precision", 2)
 pd.set_option("display.precision", 2)
