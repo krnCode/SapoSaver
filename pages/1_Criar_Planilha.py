@@ -40,7 +40,7 @@ st.markdown(
     """
     # Criar Planilha
 
-    Nesta página você pode criar uma planilha de controle de seus gastos.
+    Nesta página você pode criar uma planilha de controle de seus gastos para utilizar no Sapo Saver.
     
     ---
     """
