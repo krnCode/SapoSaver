@@ -7,14 +7,14 @@ Sapo Saver te ajuda a controlar seus gastos e manter seu orçamento financeiro.
 
 
 ## Descrição
-Sapo Saver é um web app para controle financeiro e orçamentário.
+Sapo Saver é um web app que te ajuda a mostrar onde você está deixando o seu dinheiro.
 
-No app você poderá gerar uma planilha de controle para acompanhar o destino do seu dinheiro, ver se está gastando mais do que ganha, saber para onde seu dinheiro está sendo gasto, como seus gastos estão concentrados.
+No app você poderá gerar uma planilha modelo para incluir suas despesas, e depois fazer o upload para ver se está gastando mais do que ganha, saber para onde seu dinheiro está sendo gasto e como seus gastos estão concentrados.
 
 Com estas informações, você poderá se planejar melhor, destinar seu dinheiro para onde importa e assim ter mais tranquilidade e até conquistar seus sonhos de consumo mais rapidamente! 
 
 ## Recursos
-* Crie uma planilha de controle de gastos, que pode ser utilizada novamente no app para seu controle;
+* Crie uma planilha modelo de controle de gastos, que pode ser utilizada novamente no app para seu controle;
 * Acompanhe seus gastos e saiba onde está deixando seu dinheiro;
 * Veja a concentração de gastos por tipo e período;
 * Saiba se está gastando mais ou menos do que sua renda permite; 
