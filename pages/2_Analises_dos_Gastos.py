@@ -73,9 +73,9 @@ if base_de_dados is not None:
     with st.sidebar:
         st.markdown("---")
         st.write("Variáveis de Controle dos Gastos")
-        renda = st.number_input("Informe sua renda do mes:", min_value=0, value=2300)
+        renda = st.number_input("Informe sua renda do mes:", min_value=0, value=0)
         meta_gastos = st.number_input(
-            "Informe seu limite de gastos:", min_value=0, value=1500
+            "Informe seu limite de gastos:", min_value=0, value=0
         )
         st.markdown("---")
 
@@ -196,12 +196,16 @@ if base_de_dados is not None:
         chart_extrato = (
             (
                 alt.Chart(data=df_periodo)
-                .mark_bar(size=10)
+                .mark_bar(align="center", cursor="auto")
                 .encode(
                     x=alt.X(
                         "Data:T",
                         timeUnit="yearmonth",
-                        axis=alt.Axis(title="Periodo", format="%b %y"),
+                        axis=alt.Axis(
+                            title="Periodo",
+                            format="%b %y",
+                            labelAlign="left",
+                        ),
                     ),
                     y="Valor",
                     color="Valor",
@@ -267,7 +271,7 @@ if base_de_dados is not None:
             )
         )
         st.altair_chart(altair_chart=chart_descricao, use_container_width=True)
-
+    st.markdown("---")
 
 else:
     st.markdown(
