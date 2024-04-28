@@ -42,8 +42,6 @@ st.markdown(
 
     Nesta página você pode criar uma planilha de controle de seus gastos.
     
-    🚧 Página em construção 🚧
-    
     ---
     """
 )
