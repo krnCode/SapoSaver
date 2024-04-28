@@ -76,7 +76,7 @@ if base_de_dados is not None:
         st.write("Variáveis de Controle dos Gastos")
         renda = st.number_input("Informe sua renda do mes:", min_value=0, value=2300)
         meta_gastos = st.number_input(
-            "Informe sua meta de gastos:", min_value=0, value=1500
+            "Informe seu limite de gastos:", min_value=0, value=1500
         )
         st.markdown("---")
 
@@ -147,9 +147,8 @@ if base_de_dados is not None:
         )
     st.markdown("---")
 
-    # TODO: Incluir mais informações no resumo (top 3 despesas, se está dentro do orçamento ou fora, etc.)
     # MARK: MÉTRICAS
-    st.markdown("## Resumo")
+    st.markdown("## Resumo do Mes Atual")
     col1, col2 = st.columns([1, 1])
 
     df_total_mes = (
@@ -157,11 +156,42 @@ if base_de_dados is not None:
     )
     df_dif_mes_anterior = df_total_mes.set_index("Data").diff().tail(n=1)
 
-    st.metric(
-        label="Gastos do Mês",
-        value=df_total_mes["Valor"].tail(n=1),
-        delta=int(df_dif_mes_anterior["Valor"].item()),
-    )
+    with col1:
+        st.metric(
+            label="Gastos do Mês",
+            value=df_total_mes["Valor"].tail(n=1),
+            delta=round(df_dif_mes_anterior["Valor"].item(), 2),
+            delta_color="inverse",
+        )
+
+    with col2:
+        pass
+
+        gasto_menos_meta = df_total_mes["Valor"].tail(n=1).item() - meta_gastos
+        if gasto_menos_meta < 0:
+            gasto_menos_meta *= -1
+        if meta_gastos <= df_total_mes["Valor"].tail(n=1).item():
+            st.markdown(
+                f"Total acima do previsto: :red[**{round(gasto_menos_meta,2)}**]"
+            )
+        else:
+            st.balloons()
+            st.markdown(
+                f"Total abaixo do previsto :green[**{round(gasto_menos_meta,2)}**]"
+            )
+
+        renda_menos_gastos = df_total_mes["Valor"].tail(n=1).item() - renda
+        if renda_menos_gastos < 0:
+            renda_menos_gastos *= -1
+        if renda <= df_total_mes["Valor"].tail(n=1).item():
+            st.markdown(
+                f"Após pagar todos os gastos, você terá de perda: :red[**{round(renda_menos_gastos,2)}**]"
+            )
+        else:
+            st.markdown(
+                f"Após pagar todos os gastos, você terá de sobra: :green[**{round(renda_menos_gastos,2)}**]"
+            )
+
     st.markdown("---")
 
     # MARK: GRÁFICOS
