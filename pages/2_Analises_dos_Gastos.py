@@ -136,7 +136,7 @@ if base_de_dados is not None:
 
     # MARK: MÉTRICAS
     st.markdown("## Resumo do Mes Atual")
-    col1, col2 = st.columns([1, 1])
+    col1, col2, col3 = st.columns([1, 1, 1])
 
     df_total_mes = (
         df.groupby([pd.Grouper(key="Data", freq="ME")])["Valor"].sum().reset_index()
@@ -152,6 +152,11 @@ if base_de_dados is not None:
         )
 
     with col2:
+        st.metric(
+            label="Valor Médio dos Gastos", value=round(df_total_mes["Valor"].mean(), 2)
+        )
+
+    with col3:
         pass
 
         gasto_menos_meta = df_total_mes["Valor"].tail(n=1).item() - meta_gastos
@@ -183,11 +188,11 @@ if base_de_dados is not None:
 
     # MARK: GRÁFICOS
     st.markdown("## Visualizações")
-    col3, col4 = st.columns([1, 1])
+    col4, col5 = st.columns([1, 1])
 
     # TODO: Ajustar datas - tradução para pt_BR
     # TODO: Ajustar gráfico - descrição aparece entre as barras
-    with col3:
+    with col4:
         df_periodo = (
             df_filtro.groupby([pd.Grouper(key="Data", freq="ME")])["Valor"]
             .sum()
@@ -248,7 +253,7 @@ if base_de_dados is not None:
             use_container_width=True,
         )
 
-    with col4:
+    with col5:
         df_descricao = (
             df_filtro.groupby(["Descrição", "Tipo"])["Valor"].sum().reset_index()
         )
