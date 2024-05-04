@@ -150,9 +150,8 @@ if base_de_dados is not None:
         )
 
     with col2:
-        st.metric(
-            label="Valor Médio dos Gastos", value=round(df_total_mes["Valor"].mean(), 2)
-        )
+        media_gastos = round(df_total_mes["Valor"].mean(), 2)
+        st.metric(label="Valor Médio dos Gastos", value=media_gastos)
 
     with col3:
         pass
@@ -246,8 +245,22 @@ if base_de_dados is not None:
             )
             .encode(y="Meta de Gastos")
         )
+        chart_media_gastos = (
+            alt.Chart(pd.DataFrame({"Media dos Gastos": [media_gastos]}))
+            .mark_rule(
+                color="#c1121f",
+                description="Média dos Gastos",
+                strokeCap="butt",
+                strokeWidth=1,
+                strokeDash=[8.8],
+            )
+            .encode(y="Media dos Gastos")
+        )
         st.altair_chart(
-            altair_chart=chart_extrato + chart_renda + chart_meta_gastos,
+            altair_chart=chart_extrato
+            + chart_renda
+            + chart_meta_gastos
+            + chart_media_gastos,
             use_container_width=True,
         )
 
