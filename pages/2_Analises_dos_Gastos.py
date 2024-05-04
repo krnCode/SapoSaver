@@ -270,13 +270,12 @@ if base_de_dados is not None:
         )
         chart_descricao = (
             alt.Chart(data=df_descricao)
-            .mark_bar()
+            .mark_bar(align="center", cursor="auto")
             .encode(
                 x="Valor",
                 y=alt.Y("Descrição").sort("-x"),
                 color="Tipo",
             )
-            .interactive()
             .properties(
                 title={
                     "text": "Total de Gastos Conforme Descrição",
@@ -285,6 +284,7 @@ if base_de_dados is not None:
                     "fontWeight": "bold",
                 }
             )
+            .interactive()
         )
         st.altair_chart(altair_chart=chart_descricao, use_container_width=True)
     st.markdown("---")
