@@ -209,7 +209,7 @@ if base_de_dados is not None:
                             labelAlign="left",
                         ),
                     ),
-                    y="Valor",
+                    y=alt.Y("Valor", title="Valor"),
                     color="Valor",
                 )
             )
