@@ -524,7 +524,7 @@ wheels = [
 [[package]]
 name = "saposaver"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "openpyxl" },
     { name = "pandas" },
